@@ -5,11 +5,6 @@ metadata:
     author: "j3ssie"
 
 define:
-    error = "You have an error in your SQL syntax"
-            detail: "Error-based SQL injection"
-            remediation: "Manual invesatigation is advised."
-
-define:
     issueDetail = `Error-based SQL injection`
     references = `
     References:
@@ -81,4 +76,3 @@ given insertion point then
             detail: `{issueDetail}`
             remediation: `{issueRemediation}`
     end if
-

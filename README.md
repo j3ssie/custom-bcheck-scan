@@ -31,9 +31,12 @@ Follow the steps below to inspect each scan using the BSCode Editor:
 
 1. Open BurpSuite and navigate to Extensions -> BCheck.
 2. Click on 'New' -> Blank.
-   ![BSCode Editor Window](bscode_editor_window_image.png)
+   ![bscode-editor](https://github.com/j3ssie/custom-bcheck-scan/assets/23289085/022236ad-25c6-4b0b-a425-5a9ba2cda024)
 3. Copy any scan into the editor.
 4. Right-click on any request/response and select 'Send to BCheck Editor'.
-   ![BSCode Editor Window](bscode_editor_window_image.png)
+   ![send-to-bcheck](https://github.com/j3ssie/custom-bcheck-scan/assets/23289085/7626e877-7606-468b-8159-314721d58fa9)
+
 5. Click on 'Validate' to ensure the scan is correct, then click 'Run Test' to observe how the rule runs.
 
+6. "Now, you can view the details of the request in the 'Logger' tab and any identified issues in the 'Issue Activity' tab."
+   ![view-issue](https://github.com/j3ssie/custom-bcheck-scan/assets/23289085/b78be913-863f-41cb-9aff-bcda8db9187e)
