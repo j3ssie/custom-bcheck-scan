@@ -1,0 +1,84 @@
+metadata:
+    language: v1-beta
+    name: "error based sqli Insertion-point-level"
+    description: "Inserts a calculation into each parameter to detect suspicious input transformation"
+    author: "j3ssie"
+
+define:
+    error = "You have an error in your SQL syntax"
+            detail: "Error-based SQL injection"
+            remediation: "Manual invesatigation is advised."
+
+define:
+    issueDetail = `Error-based SQL injection`
+    references = `
+    References:
+    - https://portswigger.net/web-security/sql-injection
+    - https://owasp.org/www-community/attacks/SQL_Injection
+    - https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection
+    - https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html`
+    issueRemediation = `Ensure clear, descriptive error messages with guidance on resolution steps
+     {references}`
+
+run for each:
+    injections = `'"`, `"`, `'`
+
+# we will automatically insert into nested insertion points
+given insertion point then
+    send payload:
+        appending: {injections}
+
+    send payload:
+        replacing: {injections}
+
+    # SQL error
+    if {base.response.body} matches "You have an error in your SQL syntax" or
+        {base.response.body} matches "Error: Unknown column" or
+        {base.response.body} matches "MySqlClient\." or
+        {base.response.body} matches "com\.mysql\.jdbc\.exceptions" or
+        {base.response.body} matches "Illegal mix of collations \([\w\s\,]+\) and \([\w\s\,]+\) for operation" or
+        {base.response.body} matches "valid MySQL result" or
+        {base.response.body} matches "warning mysql_" or
+        {base.response.body} matches "CLI Driver.*DB2" or
+        {base.response.body} matches "db2_\w+\(" or
+        {base.response.body} matches "DB2 SQL error" or
+        {base.response.body} matches "\bdb2_\w+\(" or
+        {base.response.body} matches "\[(ODBC SQL Server Driver|SQL Server|ODBC Driver Manager)\]" or
+        {base.response.body} matches "Unclosed quotation mark" or
+        {base.response.body} matches "warning.*mssql_.*" or
+        {base.response.body} matches "Driver.* SQL[-_]*Server" or
+        {base.response.body} matches "(\W|\A)SQL Server.*Driver" or
+        {base.response.body} matches "Conversion failed when converting the" or
+        {base.response.body} matches "Cannot initialize the data source object of OLE DB provider" or
+        {base.response.body} matches "QUERY\s+\[thread1\] SyntaxError:" or
+        {base.response.body} matches "uncaught exception:" or
+        {base.response.body} matches "PostgreSQL.*ERROR" or
+        {base.response.body} matches "Warning.*\Wpg_.*" or
+        {base.response.body} matches "Wvalid PostgreSQL result" or
+        {base.response.body} matches "Npgsql\." or
+        {base.response.body} matches "org\.postgresql\.util\.PSQLException" or
+        {base.response.body} matches "SQLite/JDBCDriver" or
+        {base.response.body} matches "SQLite.Exception" or
+        {base.response.body} matches "System.Data.SQLite.SQLiteException" or
+        {base.response.body} matches "Warning.*sqlite_.*" or
+        {base.response.body} matches "Warning.*SQLite3::" or
+        {base.response.body} matches "Warning.*sqlite_.*" or
+        {base.response.body} matches "\[SQLITE_ERROR\]" or
+        {base.response.body} matches "org\.hsqldb\.jdbc" or
+        {base.response.body} matches "Dynamic SQL Error" or
+        {base.response.body} matches "\[function.ibase.query\]" or
+        {base.response.body} matches "Warning.*maxdb.*" or
+        {base.response.body} matches "Warning.*ingre_" or
+        {base.response.body} matches "Warning.*ibase_.*" or
+        {base.response.body} matches "(?i)Warning.*sybase.*" or
+        {base.response.body} matches "SQL error.*POS([0-9]+).*" or
+        {base.response.body} matches "Ingres SQLSTATE" or
+        {base.response.body} matches "Ingres\W.*Driver" or
+        {base.response.body} matches "DB Error:" then
+        report issue:
+            severity: high
+            confidence: firm
+            detail: `{issueDetail}`
+            remediation: `{issueRemediation}`
+    end if
+
