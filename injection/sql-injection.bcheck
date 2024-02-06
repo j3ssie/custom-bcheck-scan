@@ -1,6 +1,6 @@
 metadata:
     language: v1-beta
-    name: "error based sqli Insertion-point-level"
+    name: "Error Based SQL Injection"
     description: "Inserts a calculation into each parameter to detect suspicious input transformation"
     author: "j3ssie"
 
@@ -27,49 +27,49 @@ given insertion point then
         replacing: {injections}
 
     # SQL error
-    if {base.response.body} matches "You have an error in your SQL syntax" or
-        {base.response.body} matches "Error: Unknown column" or
-        {base.response.body} matches "MySqlClient\." or
-        {base.response.body} matches "com\.mysql\.jdbc\.exceptions" or
-        {base.response.body} matches "Illegal mix of collations \([\w\s\,]+\) and \([\w\s\,]+\) for operation" or
-        {base.response.body} matches "valid MySQL result" or
-        {base.response.body} matches "warning mysql_" or
-        {base.response.body} matches "CLI Driver.*DB2" or
-        {base.response.body} matches "db2_\w+\(" or
-        {base.response.body} matches "DB2 SQL error" or
-        {base.response.body} matches "\bdb2_\w+\(" or
-        {base.response.body} matches "\[(ODBC SQL Server Driver|SQL Server|ODBC Driver Manager)\]" or
-        {base.response.body} matches "Unclosed quotation mark" or
-        {base.response.body} matches "warning.*mssql_.*" or
-        {base.response.body} matches "Driver.* SQL[-_]*Server" or
-        {base.response.body} matches "(\W|\A)SQL Server.*Driver" or
-        {base.response.body} matches "Conversion failed when converting the" or
-        {base.response.body} matches "Cannot initialize the data source object of OLE DB provider" or
-        {base.response.body} matches "QUERY\s+\[thread1\] SyntaxError:" or
-        {base.response.body} matches "uncaught exception:" or
-        {base.response.body} matches "PostgreSQL.*ERROR" or
-        {base.response.body} matches "Warning.*\Wpg_.*" or
-        {base.response.body} matches "Wvalid PostgreSQL result" or
-        {base.response.body} matches "Npgsql\." or
-        {base.response.body} matches "org\.postgresql\.util\.PSQLException" or
-        {base.response.body} matches "SQLite/JDBCDriver" or
-        {base.response.body} matches "SQLite.Exception" or
-        {base.response.body} matches "System.Data.SQLite.SQLiteException" or
-        {base.response.body} matches "Warning.*sqlite_.*" or
-        {base.response.body} matches "Warning.*SQLite3::" or
-        {base.response.body} matches "Warning.*sqlite_.*" or
-        {base.response.body} matches "\[SQLITE_ERROR\]" or
-        {base.response.body} matches "org\.hsqldb\.jdbc" or
-        {base.response.body} matches "Dynamic SQL Error" or
-        {base.response.body} matches "\[function.ibase.query\]" or
-        {base.response.body} matches "Warning.*maxdb.*" or
-        {base.response.body} matches "Warning.*ingre_" or
-        {base.response.body} matches "Warning.*ibase_.*" or
-        {base.response.body} matches "(?i)Warning.*sybase.*" or
-        {base.response.body} matches "SQL error.*POS([0-9]+).*" or
-        {base.response.body} matches "Ingres SQLSTATE" or
-        {base.response.body} matches "Ingres\W.*Driver" or
-        {base.response.body} matches "DB Error:" then
+    if {latest.response.body} matches "You have an error in your SQL syntax" or
+        {latest.response.body} matches "Error: Unknown column" or
+        {latest.response.body} matches "MySqlClient\." or
+        {latest.response.body} matches "com\.mysql\.jdbc\.exceptions" or
+        {latest.response.body} matches "Illegal mix of collations \([\w\s\,]+\) and \([\w\s\,]+\) for operation" or
+        {latest.response.body} matches "valid MySQL result" or
+        {latest.response.body} matches "warning mysql_" or
+        {latest.response.body} matches "CLI Driver.*DB2" or
+        {latest.response.body} matches "db2_\w+\(" or
+        {latest.response.body} matches "DB2 SQL error" or
+        {latest.response.body} matches "\bdb2_\w+\(" or
+        {latest.response.body} matches "\[(ODBC SQL Server Driver|SQL Server|ODBC Driver Manager)\]" or
+        {latest.response.body} matches "Unclosed quotation mark" or
+        {latest.response.body} matches "warning.*mssql_.*" or
+        {latest.response.body} matches "Driver.* SQL[-_]*Server" or
+        {latest.response.body} matches "(\W|\A)SQL Server.*Driver" or
+        {latest.response.body} matches "Conversion failed when converting the" or
+        {latest.response.body} matches "Cannot initialize the data source object of OLE DB provider" or
+        {latest.response.body} matches "QUERY\s+\[thread1\] SyntaxError:" or
+        {latest.response.body} matches "uncaught exception:" or
+        {latest.response.body} matches "PostgreSQL.*ERROR" or
+        {latest.response.body} matches "Warning.*\Wpg_.*" or
+        {latest.response.body} matches "Wvalid PostgreSQL result" or
+        {latest.response.body} matches "Npgsql\." or
+        {latest.response.body} matches "org\.postgresql\.util\.PSQLException" or
+        {latest.response.body} matches "SQLite/JDBCDriver" or
+        {latest.response.body} matches "SQLite.Exception" or
+        {latest.response.body} matches "System.Data.SQLite.SQLiteException" or
+        {latest.response.body} matches "Warning.*sqlite_.*" or
+        {latest.response.body} matches "Warning.*SQLite3::" or
+        {latest.response.body} matches "Warning.*sqlite_.*" or
+        {latest.response.body} matches "\[SQLITE_ERROR\]" or
+        {latest.response.body} matches "org\.hsqldb\.jdbc" or
+        {latest.response.body} matches "Dynamic SQL Error" or
+        {latest.response.body} matches "\[function.ibase.query\]" or
+        {latest.response.body} matches "Warning.*maxdb.*" or
+        {latest.response.body} matches "Warning.*ingre_" or
+        {latest.response.body} matches "Warning.*ibase_.*" or
+        {latest.response.body} matches "(?i)Warning.*sybase.*" or
+        {latest.response.body} matches "SQL error.*POS([0-9]+).*" or
+        {latest.response.body} matches "Ingres SQLSTATE" or
+        {latest.response.body} matches "Ingres\W.*Driver" or
+        {latest.response.body} matches "DB Error:" then
         report issue:
             severity: high
             confidence: firm

@@ -48,10 +48,15 @@ given request then
         method: "GET"
         replacing path: `{regex_replace({regex_replace({base.request.url}, "^.*?\/.*?\/.*?\/", "/")}, "([^/]+)$", "")}{potential_path}`
 
-    if {check.response.status_code} is "200" and
-        "APP_ENV" in {check.response.body} then
-        if {check.response.headers} matches "text/plain" or
-            {check.response.headers} matches "octet-stream" then
+    # replace the potential path with entire URI
+    send request called check1:
+        method: "GET"
+        replacing path: `{regex_replace({base.request.url}, "^.*", "")}/{potential_path}`
+
+    if {latest.response.status_code} is "200" and
+        "APP_ENV" in {latest.response.body} then
+        if {latest.response.headers} matches "text/plain" or
+            {latest.response.headers} matches "octet-stream" then
             report issue:
                 severity: high
                 confidence: tentative

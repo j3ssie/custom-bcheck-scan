@@ -16,7 +16,7 @@ custom-bcheck-scan/
 ├── sensitive                  # Common check for sensitive file s
 ├── vulnerability-classes      # Specifically targeting a particular type of vulnerability such as sqli, xss, etc.
 ├── testing                    # Testing scan that I'm still experimenting with
-
+.
 ```
 
 ## Testing the Scan

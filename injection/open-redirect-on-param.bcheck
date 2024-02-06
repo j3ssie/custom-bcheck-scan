@@ -1,0 +1,102 @@
+metadata:
+    language: v1-beta
+    name: "Open Redirect on Parameter"
+    description: "Unvalidated redirects and forwards are possible when a web application accepts untrusted input that could cause the web application to redirect the request to a URL contained within untrusted input"
+    author: "j3ssie"
+
+define:
+    issueDetail = `Open Redirect`
+    references = `
+    References:
+    - https://portswigger.net/web-security/sql-injection
+    - https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html`
+    issueRemediation = `Implement a validation to restrict redirects to trusted domains only
+     {references}`
+
+run for each:
+    injections =
+        `/%09/example.com`,
+        `/%2f%2fexample.com`,
+        `/%2f%5c%2f%67%6f%6f%67%6c%65%2e%63%6f%6d/`,
+        `/%5cexample.com`,
+        `/%68%74%74%70%3a%2f%2f%67%6f%6f%67%6c%65%2e%63%6f%6d`,
+        `/.example.com`,
+        `//%09/example.com`,
+        `//%5cexample.com`,
+        `///%09/example.com`,
+        `///%5cexample.com`,
+        `////%09/example.com`,
+        `////%5cexample.com`,
+        `/////example.com`,
+        `/////example.com/`,
+        `////\;@example.com`,
+        `////example.com/`,
+        `////example.com/%2e%2e`,
+        `////example.com/%2e%2e%2f`,
+        `////example.com/%2f%2e%2e`,
+        `////example.com/%2f..`,
+        `////example.com//`,
+        `///\;@example.com`,
+        `///example.com`,
+        `///example.com/`,
+        `///example.com/%2e%2e`,
+        `///example.com/%2e%2e%2f`,
+        `///example.com/%2f%2e%2e`,
+        `///example.com/%2f..`,
+        `///example.com//`,
+        `//example.com`,
+        `//example.com/`,
+        `//example.com/%2e%2e`,
+        `//example.com/%2e%2e%2f`,
+        `//example.com/%2f%2e%2e`,
+        `//example.com/%2f..`,
+        `//example.com//`,
+        `//google%00.com`,
+        `//google%E3%80%82com`,
+        `//https:///example.com/%2e%2e`,
+        `//https://example.com/%2e%2e%2f`,
+        `//https://example.com//`,
+        `/<>//example.com`,
+        `/?url=//example.com&next=//example.com&redirect=//example.com&redir=//example.com&rurl=//example.com&redirect_uri=//example.com`,
+        `/?url=/\/example.com&next=/\/example.com&redirect=/\/example.com&redirect_uri=/\/example.com`,
+        `/?url=Https://example.com&next=Https://example.com&redirect=Https://example.com&redir=Https://example.com&rurl=Https://example.com&redirect_uri=Https://example.com`,
+        `/\/\/example.com/`,
+        `/\/example.com/`,
+        `/example.com/%2f%2e%2e`,
+        `/http://%67%6f%6f%67%6c%65%2e%63%6f%6d`,
+        `/http://example.com`,
+        `/http:/example.com`,
+        `/https:/%5cexample.com/`,
+        `/https://%09/example.com`,
+        `/https://%5cexample.com`,
+        `/https:///example.com/%2e%2e`,
+        `/https:///example.com/%2f%2e%2e`,
+        `/https://example.com`,
+        `/https://example.com/`,
+        `/https://example.com/%2e%2e`,
+        `/https://example.com/%2e%2e%2f`,
+        `/https://example.com/%2f%2e%2e`,
+        `/https://example.com/%2f..`,
+        `/https://example.com//`,
+        `/https:example.com`,
+        `/redirect?url=//example.com&next=//example.com&redirect=//example.com&redir=//example.com&rurl=//example.com&redirect_uri=//example.com`,
+        `/redirect?url=/\/example.com&next=/\/example.com&redirect=/\/example.com&redir=/\/example.com&rurl=/\/example.com&redirect_uri=/\/example.com`,
+        `/redirect?url=Https://example.com&next=Https://example.com&redirect=Https://example.com&redir=Https://example.com&rurl=Https://example.com&redirect_uri=Https://example.com`
+
+# we will automatically insert into nested insertion points
+given insertion point then
+    send payload:
+        replacing: {injections}
+
+    if {latest.response.status_code} is "301" or
+        {latest.response.status_code} is "302" then
+        # Make sure the Location: header is not contains the original domain
+        if ({injections} in {latest.response.headers}) and
+            not({base.request.url.host} in {latest.response.headers}) then
+            report issue:
+                severity: low
+                confidence: firm
+                detail: `{issueDetail}`
+                remediation: `{issueRemediation}`
+        end if
+    end if

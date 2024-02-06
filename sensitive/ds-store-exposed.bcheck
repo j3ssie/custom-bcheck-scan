@@ -14,11 +14,16 @@ given request then
         method: "GET"
         replacing path: `{regex_replace({regex_replace({base.request.url}, "^.*?\/.*?\/.*?\/", "/")}, "([^/]+)$", "")}{potential_path}`
 
-    if {check.response.status_code} is "200" and
-        "Bud1" in {check.response.body} and
-        "DSDB" in {check.response.body} then
-        if {check.response.headers} matches "Accept-Ranges: bytes" or
-            {check.response.headers} matches "octet-stream" then
+    # replace the potential path with entire URI
+    send request called check1:
+        method: "GET"
+        replacing path: `{regex_replace({base.request.url}, "^.*", "")}/{potential_path}`
+
+    if {latest.response.status_code} is "200" and
+        "Bud1" in {latest.response.body} and
+        "DSDB" in {latest.response.body} then
+        if {latest.response.headers} matches "Accept-Ranges: bytes" or
+            {latest.response.headers} matches "octet-stream" then
             report issue:
                 severity: low
                 confidence: certain
