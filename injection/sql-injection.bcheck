@@ -3,6 +3,7 @@ metadata:
     name: "Error Based SQL Injection"
     description: "Inserts a calculation into each parameter to detect suspicious input transformation"
     author: "j3ssie"
+    tags: "sqli", "error-based", "injection"
 
 define:
     issueDetail = `Error-based SQL injection`

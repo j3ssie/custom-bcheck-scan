@@ -3,6 +3,7 @@ metadata:
     name: "Open Redirect on Parameter"
     description: "Unvalidated redirects and forwards are possible when a web application accepts untrusted input that could cause the web application to redirect the request to a URL contained within untrusted input"
     author: "j3ssie"
+    tags: "open-redirect", "injection"
 
 define:
     issueDetail = `Open Redirect`
