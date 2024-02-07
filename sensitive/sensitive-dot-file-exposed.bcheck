@@ -641,7 +641,7 @@ run for each:
         ".zuul.yaml",
         ".zuul.yml"
 
-given request then
+given path then
     # replace the potential path with the last path
     send request called check:
         method: "GET"

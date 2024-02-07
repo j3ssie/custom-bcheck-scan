@@ -566,7 +566,7 @@ run for each:
         "glbc.log",
         "admin/errors.log"
 
-given request then
+given path then
     # replace the potential path with the last path
     send request called check:
         method: "GET"
