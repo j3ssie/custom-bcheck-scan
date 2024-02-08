@@ -1,0 +1,109 @@
+metadata:
+    language: v2-beta
+    name: "Interesting Parameters In Request"
+    description: "Identifies typical parameters susceptible to specific vulnerability classes such as IDOR, SQLi, RCE, and more."
+    author: "j3ssie"
+    tags: "passive", "param", "interesting", "noise"
+
+define:
+    references = `
+    ## References:
+    - https://cheatsheetseries.owasp.org/index.html
+    - https://portswigger.net/burp/documentation/scanner/vulnerabilities-list
+    ## List of rule taking from:
+    - https://github.com/bugcrowd/HUNT/blob/master/Burp/conf/issues.json
+    - https://github.com/1ndianl33t/Gf-Patterns
+    - https://chat.openai.com/
+    `
+    issueRemediation = `Identifies typical parameters susceptible to specific vulnerability classes such as IDOR, SQLi, RCE, and more. Manual Review is recommended.
+    {references}`
+
+given request then
+    # sqli
+    if {base.request.url.query} matches "\b(?:cat|category|column|comment|delete|email|fetch|field|filter|from|group|id|input|keyword|name|number|order|orderby|param|params|password|post|process|query|report|results|role|row|search|sel|select|sleep|sort|string|table|term|text|title|update|user|username|value|view|where)=\b" or
+        {base.request.body} matches "\b(?:cat|category|column|comment|delete|email|fetch|field|filter|from|group|id|input|keyword|name|number|order|orderby|param|params|password|post|process|query|report|results|role|row|search|sel|select|sleep|sort|string|table|term|text|title|update|user|username|value|view|where)=\b" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Potential SQL Injection Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    # idor
+    if {base.request.url.query} matches "\b(?:account|doc|edit|email|group|guid|hash|id|index|item_id|key|no|number|object_id|order|order_id|post_id|product_id|profile|ref|reference|report|sequence|session_id|session_token|token|user|user_id|uuid)=\b" or
+        {base.request.body} matches "\b(?:account|doc|edit|email|group|guid|hash|id|index|item_id|key|no|number|object_id|order|order_id|post_id|product_id|profile|ref|reference|report|sequence|session_id|session_token|token|user|user_id|uuid)=\b" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Potential IDOR Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    # os command injection
+    if {base.request.url.query} matches "\b(?:arg|args|argument|cli|cmd|code|command|daemon|dir|downloa|download|exec|execute|file|filename|flag|func|functio|input|ip|jump|load|log|module|option|options|param|parameter|params|path|payload|ping|print|process|query|read|reg|req|run|script|scripts|shell)=\b" or
+        {base.request.body} matches "\b(?:arg|args|argument|cli|cmd|code|command|daemon|dir|downloa|download|exec|execute|file|filename|flag|func|functio|input|ip|jump|load|log|module|option|options|param|parameter|params|path|payload|ping|print|process|query|read|reg|req|run|script|scripts|shell)=\b" then
+        report issue and continue:
+            severity: low
+            confidence: tentative
+            detail: `Potential OS Command Injection Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    # LFI
+    if {base.request.url.query} matches "\b(?:action|cat|conf|content|date|detail|dir|directory|doc|document|download|file|filename|folder|inc|include|input|layout|locate|location|name|page|path|pdf|php_path|prefix|resource|root|show|site|style|target|template|type|url|view)=\b" or
+        {base.request.body} matches "\b(?:action|cat|conf|content|date|detail|dir|directory|doc|document|download|file|filename|folder|inc|include|input|layout|locate|location|name|page|path|pdf|php_path|prefix|resource|root|show|site|style|target|template|type|url|view)=\b" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Potential File Inclusion and Path Traversal Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    # SSRF
+    if {base.request.url.query} matches "\b(?:access|callback|cfg|clone|continue|create|data|dbg|dest|dir|disable|doc|document|domain|edit|enable|endpoint|exec|execute|feed|fetch|file|filename|folder|grant|host|html|img|link|load|location|make|modify|navigation|next|open|out|page|path|php_path|port|redirect|reference|rename|request|reset|return|root|service|shell|show|site|source|style|target|test|to|toggle|uri|url|val|validate|view|window)=\b" or
+        {base.request.body} matches "\b(?:access|callback|cfg|clone|continue|create|data|dbg|dest|dir|disable|doc|document|domain|edit|enable|endpoint|exec|execute|feed|fetch|file|filename|folder|grant|host|html|img|link|load|location|make|modify|navigation|next|open|out|page|path|php_path|port|redirect|reference|rename|request|reset|return|root|service|shell|show|site|source|style|target|test|to|toggle|uri|url|val|validate|view|window)=\b" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Potential SSRF Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    # SSTI
+    if {base.request.url.query} matches "\b(?:activity|content|data|id|input|layout|name|page|param|preview|redirect|render|template|theme|tpl|view)=\b" or
+        {base.request.body} matches "\b(?:activity|content|data|id|input|layout|name|page|param|preview|redirect|render|template|theme|tpl|view)=\b" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Potential SSTI Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    # Debug
+    if {base.request.url.query} matches "\b(?:access|adm|admin|alter|cfg|clone|config|create|dbg|debug|delete|disable|edit|enable|exec|execute|grant|load|make|modify|rename|reset|root|shell|test|toggle)=\b" or
+        {base.request.body} matches "\b(?:access|adm|admin|alter|cfg|clone|config|create|dbg|debug|delete|disable|edit|enable|exec|execute|grant|load|make|modify|rename|reset|root|shell|test|toggle)=\b" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Potential Debug Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    # open redirect
+    if {base.request.url.query} matches "\b(?:image_url|open|callback|checkout|checkout_url|continue|data|dest|destination|dir|domain|feed|file|file_name|file_url|folder|folder_url|forward|from_url|go|goto|host|html|image_url|img_url|load_file|load_url|login?to|login_url|logout|navigation|next|next_page|out|page|page_url|path|port|redir|redirect|redirect_to|redirect_uri|redirect_url|reference|return|returnto|return_path|return_to|return_url|rt|rurl|show|site|target|to|uri|url|val|validate|view|window)=\b" or
+        {base.request.body} matches "\b(?:image_url|open|callback|checkout|checkout_url|continue|data|dest|destination|dir|domain|feed|file|file_name|file_url|folder|folder_url|forward|from_url|go|goto|host|html|image_url|img_url|load_file|load_url|login?to|login_url|logout|navigation|next|next_page|out|page|page_url|path|port|redir|redirect|redirect_to|redirect_uri|redirect_url|reference|return|returnto|return_path|return_to|return_url|rt|rurl|show|site|target|to|uri|url|val|validate|view|window)=\b" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Potential Open Redirect Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if
+
+    if {base.request.url.query} matches "(\w+)=(https?://\S+)" or
+        {base.request.body} matches "(\w+)=(https?://\S+)" then
+        report issue and continue:
+            severity: low
+            confidence: tentative
+            detail: `Potential URL in Parameter found at {base.request.url.query}`
+            remediation: `{issueRemediation}`
+    end if

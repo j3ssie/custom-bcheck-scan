@@ -1,0 +1,236 @@
+metadata:
+    language: v2-beta
+    name: "Nginx off by slash"
+    description: "Path traversal via Nginx Misconfiguration | Nginx off-by-slash"
+    author: "j3ssie"
+    tags: "nginx", "path-traversal", "off-by-slash", "injection"
+
+define:
+    references = `
+    ## References:
+    - https://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf
+    - https://github.com/bayotop/off-by-slash
+    - https://github.com/yandex/gixy/blob/master/docs/en/plugins/aliastraversal.md
+    - https://labs.hakaioffsec.com/nginx-alias-traversal/
+    `
+    issueRemediation = `Nginx off by slash. Manual Review is recommended.
+    {references}`
+    issueDetail = `Nginx off by slash`
+
+run for each:
+    injections = "..", "..;", "..%3B"
+    suffix =
+        "files",
+        "_static",
+        "admin",
+        "adminer",
+        "alpha",
+        "app1-static",
+        "app2-static",
+        "app_dir",
+        "app_nginx_static_path",
+        "asset_img",
+        "assets",
+        "audio",
+        "awstats",
+        "backend",
+        "base_dir",
+        "blankon",
+        "blob",
+        "blue",
+        "bootstrap",
+        "build",
+        "cgi-bin",
+        "challenge",
+        "challenges",
+        "chiminey",
+        "clld_dir",
+        "collected_static",
+        "community",
+        "content",
+        "counterblockd",
+        "counterwallet",
+        "css",
+        "custom",
+        "data",
+        "default",
+        "demo",
+        "demo-app",
+        "developerslv",
+        "dist",
+        "doc",
+        "docs",
+        "download",
+        "downloads",
+        "error",
+        "errors",
+        "export",
+        "favicons",
+        "favs",
+        "films",
+        "flask_test_uploads",
+        "fm",
+        "font-icons",
+        "fonts",
+        "frontend",
+        "ftp",
+        "ftpmaster",
+        "hgs-static",
+        "higlass-website",
+        "home",
+        "horde",
+        "htdocs",
+        "html",
+        "httpboot",
+        "icon",
+        "icons",
+        "ikiwiki",
+        "image_data",
+        "images",
+        "img",
+        "install",
+        "items",
+        "javascript",
+        "js",
+        "js-plugin",
+        "khanlinks",
+        "kibana",
+        "kolab-syncroton",
+        "latest",
+        "layout",
+        "legal",
+        "lemonldap-ng-doc",
+        "lemonldap-ng-fr-doc",
+        "letsencrypt",
+        "lib",
+        "libs",
+        "log",
+        "logging",
+        "mailinabox",
+        "mailman",
+        "main_user",
+        "manual",
+        "media",
+        "memcached",
+        "minified",
+        "misc",
+        "moodledata",
+        "msks",
+        "munki_repo",
+        "music",
+        "name",
+        "new-js",
+        "nginx",
+        "noVNC",
+        "node_modules",
+        "oldsanta",
+        "option",
+        "outputs",
+        "owncloud",
+        "packed",
+        "patchwork",
+        "path",
+        "pictures",
+        "plugin_static",
+        "postfixadmin",
+        "prod",
+        "project_root",
+        "pub",
+        "public",
+        "public_html",
+        "public_root",
+        "qv-frontend",
+        "repo",
+        "repos",
+        "repository",
+        "resources",
+        "resourcesync",
+        "results",
+        "robots",
+        "root",
+        "roundcube",
+        "roundcubemail",
+        "run",
+        "script",
+        "scripts",
+        "shared",
+        "shibboleth",
+        "site-library",
+        "sitestatic",
+        "spearmint",
+        "src",
+        "stackato-pkg",
+        "static",
+        "static-collected",
+        "static-html",
+        "static-root",
+        "static_prod",
+        "static_root",
+        "static_user",
+        "staticfiles",
+        "stats",
+        "storage",
+        "style",
+        "styles",
+        "stylesheets",
+        "target",
+        "temp",
+        "templates",
+        "test",
+        "testfiles",
+        "tests",
+        "theme",
+        "theme_static",
+        "thumb",
+        "thumbs",
+        "tiedostot",
+        "tmp",
+        "ubuntu",
+        "ui",
+        "upfiles",
+        "upload",
+        "uploads",
+        "videos",
+        "web",
+        "web-dist",
+        "webroot_path",
+        "websocket",
+        "webstatic",
+        "well-known",
+        "whturk",
+        "wp-content",
+        "www",
+        "www-data"
+
+given path then
+    # append the injection to the first part of the path
+    # e.g: /static/main.js -> this will send the request to /static{injections}/main.js
+    send request called check1:
+        method: "GET"
+        replacing path: {regex_replace({base.request.url.path}, "\.*([^\/]+)\/", `$1{injections}/`)}
+
+    send request called check2:
+        method: "GET"
+        replacing path: {regex_replace({base.request.url.path}, "\.*([^\/]+)\/", `$1{injections}/{suffix}/`)}
+
+    # if the response of '/static/main.js' and  '/static{injections}/main.js' is the same then we have an issue
+    if {check1.response.status_code} is "200" then
+        if not({check1.response.body} differs from {base.response.body}) then
+            report issue:
+                severity: high
+                confidence: tentative
+                detail: `{issueDetail}`
+                remediation: `{issueRemediation}`
+        end if
+    end if
+
+    # if the response of '/static/main.js' and  '/static{injections}/{suffix}/main.js' is the same then we have an issue
+    if {check2.response.status_code} is "200" then
+        if not({check1.response.body} differs from {base.response.body}) then
+            report issue:
+                severity: high
+                confidence: tentative
+                detail: `{issueDetail}`
+                remediation: `{issueRemediation}`
+        end if
+    end if

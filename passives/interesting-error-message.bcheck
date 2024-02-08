@@ -1,20 +1,33 @@
 metadata:
-    language: v1-beta
+    language: v2-beta
     name: "Interesting Error In Response"
     description: "Intriguing error response that error worth checking out"
     author: "j3ssie"
-    tags: "passive", "error"
+    tags: "passive", "error", "interesting", "noise"
 
-# References:
-# List of rule taking from: https://github.com/PortSwigger/error-message-checks
-# https://raw.githubusercontent.com/PortSwigger/error-message-checks/master/src/main/resources/burp/match-rules.tab
 define:
-    references = "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html"
+    references = `
+    ## References:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html
+    ## List of rule taking from:
+    - https://raw.githubusercontent.com/PortSwigger/error-message-checks/master/src/main/resources/burp/match-rules.tab
+    - https://github.com/1ndianl33t/Gf-Patterns
+    `
     issueRemediation = `Ensure clear, descriptive error messages with guidance on resolution steps
     Reference: {references}`
     issueDetail = `Intriguing error response that error worth checking out at {latest.request.url}`
 
 given response then
+    # interesting debug page
+    if {base.response.body} matches "(Application-Trace|Routing Error|DEBUG\"? ?[=:] ?True|Caused by:|stack trace:|Microsoft .NET Framework|Traceback|[0-9]:in `|#!/us|WebApplicationException|java\\.lang\\.|phpinfo|swaggerUi|on line [0-9]|SQLSTATE)" or
+        {base.response.body} matches "mod_[\w]+:" then
+        report issue:
+            severity: low
+            confidence: certain
+            detail: `Debug Page: {issueDetail}`
+            remediation: `{issueRemediation}`
+    end if
+
     # Apache Server
     if {base.response.body} matches "AH[0-9]{5}" or
         {base.response.body} matches "mod_[\w]+:" then
@@ -95,7 +108,6 @@ given response then
             detail: `Generic Error: {issueDetail}`
             remediation: `{issueRemediation}`
     end if
-
 
     # SQL error
     if {base.response.body} matches "You have an error in your SQL syntax" or

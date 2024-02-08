@@ -1,5 +1,5 @@
 metadata:
-    language: v1-beta
+    language: v2-beta
     name: "Open Redirect on Parameter"
     description: "Unvalidated redirects and forwards are possible when a web application accepts untrusted input that could cause the web application to redirect the request to a URL contained within untrusted input"
     author: "j3ssie"
@@ -84,7 +84,6 @@ run for each:
         `/redirect?url=/\/example.com&next=/\/example.com&redirect=/\/example.com&redir=/\/example.com&rurl=/\/example.com&redirect_uri=/\/example.com`,
         `/redirect?url=Https://example.com&next=Https://example.com&redirect=Https://example.com&redir=Https://example.com&rurl=Https://example.com&redirect_uri=Https://example.com`
 
-# we will automatically insert into nested insertion points
 given insertion point then
     send payload:
         replacing: {injections}

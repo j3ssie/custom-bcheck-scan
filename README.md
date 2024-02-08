@@ -11,15 +11,31 @@ The structure of this repository is as follows:
 
 ```bash
 custom-bcheck-scan/
-├── passives                   # Passive analysis on the response to identify elements worthy of further investigation.
+├── passives                   # Passive analysis on the response to identify elements worthy of further investigation. 🧬 Be careful as certain rules may trigger excessive alerts 🧬
 ├── common                     # Common check for misconfigurations for specific technology/framework/language
-├── sensitive                  # Common check for sensitive file s
+├── sensitive                  # Common check for sensitive files
 ├── vulnerability-classes      # Specifically targeting a particular type of vulnerability such as sqli, xss, etc.
 ├── testing                    # Testing scan that I'm still experimenting with
 .
 ```
 
-## Testing the Scan
+## List of Burp Extensions that can be replace by BCheck scans in this repository
+
+I'd like to express my gratitude to the creator of these Burp Extensions and some other open-sources tools. Their work has been instrumental in enabling my BCheck scans. While I've made every effort to recreate these extensions in BCheck, it's inevitable that mistakes may occur. If there are any areas I've overlooked, please don't hesitate to contribute and help improve them.
+
+|      **My BCheck Scan**       |  **Noise**  |  **Extension Name & Author** |
+|:-----------------------------:|:-----------:|:-----------------------------|
+|[interesting-error-message](passives/interesting-error-message.bcheck) | 🚨 | [burp-suite-error-message-checks](https://github.com/augustd/burp-suite-error-message-checks) by [@augustd](https://github.com/augustd) and [gf](https://github.com/tomnomnom/gf) by [@tomnomnom](https://github.com/tomnomnom) |
+|[interesting-parameters](passives/interesting-parameters.bcheck) | 🚨 | [HUNT](https://github.com/bugcrowd/HUNT) by [@jhaddix](https://github.com/jhaddix) and [Gf-Patterns](https://github.com/1ndianl33t/Gf-Patterns) by [@1ndianl33t](https://github.com/1ndianl33t) |
+|[open-redirect-on-param](injection/open-redirect-on-param.bcheck) and [open-redirect-on-path](injection/open-redirect-on-path.bcheck) | - | Part of the [OpenRedireX](https://github.com/devanshbatham/OpenRedireX) by [@devanshbatham](https://github.com/devanshbatham) |
+
+
+> Kindly note that certain scans may produce excessive noise and generate numerous informational alerts post-scanning. It would be advisable to deactivate this feature by default and initiate scans only when necessary.
+
+
+***
+
+## How to test the BCheck scan
 
 You have two options for testing the scan:
 

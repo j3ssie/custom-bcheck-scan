@@ -1,5 +1,5 @@
 metadata:
-    language: v1-beta
+    language: v2-beta
     name: "Graphql Introspection Query Enabled"
     description: "Refers to the condition where the GraphQL server allows introspection queries, potentially exposing sensitive schema information"
     author: "j3ssie"

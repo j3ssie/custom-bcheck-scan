@@ -1,5 +1,5 @@
 metadata:
-    language: v1-beta
+    language: v2-beta
     name: "Error Based SQL Injection"
     description: "Inserts a calculation into each parameter to detect suspicious input transformation"
     author: "j3ssie"
@@ -19,7 +19,6 @@ define:
 run for each:
     injections = `'"`, `"`, `'`
 
-# we will automatically insert into nested insertion points
 given insertion point then
     send payload:
         appending: {injections}

@@ -1,36 +1,45 @@
 metadata:
     language: v2-beta
-    name: ".DS_Store Configuration Check"
-    description: "Tests for exposed svn config in current path and at the root directory of site"
+    name: "Nginx off by slash"
+    description: "Path traversal via Nginx Misconfiguration | Nginx off-by-slash"
     author: "j3ssie"
-    tags: "exposure", "ds_store", "config", "file"
+    tags: "nginx", "path-traversal", "off-by-slash", "injection"
+
+define:
+    references = `
+    ## References:
+    - https://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf
+    - https://github.com/bayotop/off-by-slash
+    - https://github.com/yandex/gixy/blob/master/docs/en/plugins/aliastraversal.md
+    - https://labs.hakaioffsec.com/nginx-alias-traversal/
+    `
+    issueRemediation = `Nginx off by slash. Manual Review is recommended.
+    {references}`
+    issueDetail = `Nginx off by slash`
 
 run for each:
-    potential_path = ".DS_Store"
+    injections = "..", "..;", "."
+    file = "js", "static", "img"
 
 given path then
-    # replace the potential path with the last path
-    # like if the path is `/v1/settings/public`. it will be convert to  `/v1/settings/{potential_path}`
-    if not({base.request.url.path} is "/") then
-        send request called check:
-            method: "GET"
-            replacing path: `{regex_replace({regex_replace({base.request.url}, "^.*?\/.*?\/.*?\/", "/")}, "([^/]+)$", "")}{potential_path}`
-
-    end if
-
-    # replace the potential path with entire URI
+    # append the injection to the first part of the path
+    # e.g: /static/main.js -> this will send the request to /static{injections}/main.js
     send request called check1:
         method: "GET"
-        replacing path: `{regex_replace({base.request.url}, "^.*", "")}/{potential_path}`
+        replacing path: {regex_replace({base.request.url.path}, "\.*([^\/]+)\/", `$1{injections}/`)}
 
-    if {latest.response.status_code} is "200" and
-        "Bud1" in {latest.response.body} and
-        "DSDB" in {latest.response.body} then
-        if {latest.response.headers} matches "Accept-Ranges: bytes" or
-            {latest.response.headers} matches "octet-stream" then
+    send request called check2:
+        method: "GET"
+        replacing path: {regex_replace({base.request.url.path}, "\.*([^\/]+)\/", `$1{injections}/{file}`)}
+
+
+    # if the response of '/static/main.js' and  '/static{injections}/main.js' is the same then we have an issue
+    if {check1.response.status_code} is "200" then
+        if {check1.response.body} is {base.response.body} then
             report issue:
-                severity: low
-                confidence: certain
-                detail: `.DS_Store configuration found at {potential_path}.`
+                severity: High
+                confidence: tentative
+                detail: `{issueDetail}`
+                remediation: `{issueRemediation}`
         end if
     end if

@@ -1,5 +1,5 @@
 metadata:
-    language: v1-beta
+    language: v2-beta
     name: "Laravel Environment file exposed"
     description: "Laravel .env file holds confidential data such as database credentials and tokens and should not be accessible to the public"
     author: "j3ssie"
