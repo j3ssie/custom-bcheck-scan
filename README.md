@@ -28,7 +28,7 @@ I'd like to express my gratitude to the creator of these Burp Extensions and som
 |[interesting-error-message](passives/interesting-error-message.bcheck) | 🚨 | [burp-suite-error-message-checks](https://github.com/augustd/burp-suite-error-message-checks) by [@augustd](https://github.com/augustd) and [gf](https://github.com/tomnomnom/gf) by [@tomnomnom](https://github.com/tomnomnom) |
 |[interesting-parameters](passives/interesting-parameters.bcheck) | 🚨 | [HUNT](https://github.com/bugcrowd/HUNT) by [@jhaddix](https://github.com/jhaddix) and [Gf-Patterns](https://github.com/1ndianl33t/Gf-Patterns) by [@1ndianl33t](https://github.com/1ndianl33t) |
 |[open-redirect-on-param](injection/open-redirect-on-param.bcheck) and [open-redirect-on-path](injection/open-redirect-on-path.bcheck) | - | Part of the [OpenRedireX](https://github.com/devanshbatham/OpenRedireX) by [@devanshbatham](https://github.com/devanshbatham) |
-
+|[nginx-off-by-slash](injection/nginx-off-by-slash.bcheck) | 🚨 | Part of the [nginx off-by-slash](https://github.com/bayotop/off-by-slash) by [@bayotop](https://github.com/bayotop) |
 
 > Kindly note that certain scans may produce excessive noise and generate numerous informational alerts post-scanning. It would be advisable to deactivate this feature by default and initiate scans only when necessary.
 
