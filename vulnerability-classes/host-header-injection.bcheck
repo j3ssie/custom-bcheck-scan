@@ -1,0 +1,62 @@
+metadata:
+    language: v2-beta
+    name: "Host Header Injection"
+    description: "Interesting PingPack via Header"
+    author: "j3ssie"
+    tags: "oast", "out-of-band", "interesting", "host-header",  "collaborator", "injection"
+
+define:
+    references = `
+    ## References:
+    - https://portswigger.net/web-security/host-header/exploiting
+    - https://portswigger.net/web-security/host-header
+    `
+    issueRemediation = `Avoid using the Host header altogether in server-side code. Double-check whether each URL really needs to be absolute
+    {references}`
+    issueDetail = `Host header injection vulnerability allows attackers to manipulate HTTP requests by altering the host header, potentially leading to unauthorized access or server-side request forgery.`
+    # generate a random collaborator address
+    oastify1 = `{generate_collaborator_address()}`
+    oastify2 = `{generate_collaborator_address()}`
+    oastify3 = `{generate_collaborator_address()}`
+
+given request then
+    send request called check1:
+        headers:
+            "Host": `{oastify1}`
+
+    send request called check2:
+        `GET {base.request.url} HTTP/1.1
+    Host: {oastify2}
+    `
+
+    send request called check3:
+        `GET {base.request.url.path} HTTP/1.1
+        Host: {oastify3}
+    Host: {base.request.url.host}
+    `
+
+    if http interactions then
+        report issue:
+            severity: high
+            confidence: tentative
+            detail: {issueDetail}
+            remediation: {issueRemediation}
+    end if
+
+    if dns interactions then
+        report issue:
+            severity: medium
+            confidence: tentative
+            detail: {issueDetail}
+            remediation: {issueRemediation}
+    end if
+
+    if (`{oastify1}` in {check1.response.body}) or
+        (`{oastify2}` in {check2.response.body}) or
+        (`{oastify3}` in {check3.response.body}) then
+        report issue:
+            severity: high
+            confidence: certain
+            detail: `{issueDetail}`
+            remediation: `{issueRemediation}`
+    end if

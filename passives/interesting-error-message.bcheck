@@ -14,7 +14,7 @@ define:
     - https://github.com/1ndianl33t/Gf-Patterns
     `
     issueRemediation = `Ensure clear, descriptive error messages with guidance on resolution steps
-    Reference: {references}`
+    {references}`
     issueDetail = `Intriguing error response that error worth checking out at {latest.request.url}`
 
 given response then

