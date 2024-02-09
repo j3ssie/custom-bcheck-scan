@@ -1,0 +1,37 @@
+metadata:
+    language: v2-beta
+    name: "Interesting base64 encoded data in URL"
+    description: "Identifies interesting base64 encoded data like JSON, PHP Object in requests/response"
+    author: "j3ssie"
+    tags: "passive", "base64", "encode", "interesting", "noise"
+
+define:
+    references = `
+    ## References:
+    - https://portswigger.net/kb/issues/00700200_base64-encoded-data-in-parameter
+
+    - https://cheatsheetseries.owasp.org/index.html
+    - https://portswigger.net/burp/documentation/scanner/vulnerabilities-list
+
+    ## List of rule taking from:
+    - https://github.com/tomnomnom/gf/blob/master/examples/base64.json
+    `
+    issueRemediation = `Identifies interesting base64 encoded data like JSON, PHP Object in requests/response. Manual Review is recommended.
+    {references}`
+
+given response then
+    if {base.response} matches "([^A-Za-z0-9+/]|^)(eyJ|YTo|Tzo|PD[89]|aHR0cHM6L|aHR0cDo|rO0)[%a-zA-Z0-9+/]+={0,2}" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Interesting Base64-encoded information discovered within the response.`
+            remediation: `{issueRemediation}`
+    end if
+
+    if {base.request} matches "([^A-Za-z0-9+/]|^)(eyJ|YTo|Tzo|PD[89]|aHR0cHM6L|aHR0cDo|rO0)[%a-zA-Z0-9+/]+={0,2}" then
+        report issue and continue:
+            severity: info
+            confidence: tentative
+            detail: `Interesting Base64-encoded information discovered within the request.`
+            remediation: `{issueRemediation}`
+    end if
